@@ -1,0 +1,10 @@
+version: '3'
+services:  
+  api:
+    container_name: contactbook-api
+    build:
+      context: .
+      dockerfile: Source/ContactBook.Api/Dockerfile
+    restart: always
+    ports:
+      - "8000:80"
