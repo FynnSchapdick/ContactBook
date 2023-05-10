@@ -5,6 +5,8 @@ namespace ContactBook.Api.Endpoints.CreateContact;
 
 public sealed class CreateContactRequestValidator : AbstractValidator<CreateContactRequest>
 {
+    private const string MobileErrorMessage = "Mobile number does not correspond to E.164 format";
+    
     public CreateContactRequestValidator()
     {
         RuleFor(x => x.Name)
@@ -19,6 +21,6 @@ public sealed class CreateContactRequestValidator : AbstractValidator<CreateCont
         RuleFor(x => x.Mobile)
             .Must(x => x != null && PhoneNumber.TryParse(x, out PhoneNumber _))
             .When(x =>  !string.IsNullOrEmpty(x.Mobile))
-            .WithMessage("Ungültiges Mobil-Nummer Format");
+            .WithMessage(MobileErrorMessage);
     }
 }

@@ -2,9 +2,7 @@
 using ContactBook.Api.Data;
 using ContactBook.Api.Domain;
 using ContactBook.Api.Endpoints.GetContact;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace ContactBook.Api.Endpoints.CreateContact;
 
@@ -12,6 +10,7 @@ public static class CreateContactEndpoint
 {
     private const string CreateContactRoute = "contacts";
     private const string CreateContactRequestContentType = "application/json";
+    private const string ContactsTag = "Contacts";
 
     public static void MapCreateContactEndpoint(this WebApplication app)
     {
@@ -21,7 +20,8 @@ public static class CreateContactEndpoint
             .Produces((int) HttpStatusCode.Conflict)
             .Produces((int) HttpStatusCode.BadRequest)
             .Produces((int) HttpStatusCode.InternalServerError)
-            .AddEndpointFilter<ValidatorFilter<CreateContactRequest>>();
+            .AddEndpointFilter<ValidatorFilter<CreateContactRequest>>()
+            .WithTags(ContactsTag);
     }
 
     private static async Task<IResult> CreateContact(CreateContactRequest request, ContactBookContext dbContext, CancellationToken cancellationToken = default)

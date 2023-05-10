@@ -5,18 +5,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ContactBook.Api.Endpoints.GetContacts;
 
-public static class GetContractsEndpoint
+public static class GetContactsEndpoint
 {
     private const string GetContactsRoute = "contacts";
+    private const string ContactsTag = "Contacts";
 
     public static void MapGetContactsEndpoint(this WebApplication app)
     {
         app.MapGet(GetContactsRoute, GetContacts)
             .Produces<PaginatedContactsResponse>()
-            .Produces((int) HttpStatusCode.InternalServerError);
+            .Produces((int) HttpStatusCode.InternalServerError)
+            .AddEndpointFilter<ValidatorFilter<GetContactsRequest>>()
+            .WithTags(ContactsTag);
     }
 
-    private static async Task<IResult> GetContacts([AsParameters] GetContractsRequest request, ContactBookContext dbContext, CancellationToken cancellationToken = default)
+    private static async Task<IResult> GetContacts([AsParameters] GetContactsRequest request, ContactBookContext dbContext, CancellationToken cancellationToken = default)
     {
         try
         {

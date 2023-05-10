@@ -20,10 +20,53 @@ public sealed class UpdateContactEndpointTests : BaseContactEndpointTests
         
         // Act
         HttpResponseMessage response = await Client.PutAsJsonAsync($"/contacts/{contact.Id}", new UpdateContactRequest("testname", "fschapdick@gmail.com", "+492111234567"));
-        var content = await response.Content.ReadAsStringAsync();
+
         // Assert
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.OK,response.StatusCode);
-        Assert.NotNull(response.Headers.Location);
+    }
+    
+    [Fact]
+    public async Task UpdateContact_ReturnsNotFound_WhenResourceWasNotFound()
+    {
+        // Act
+        HttpResponseMessage response = await Client.PutAsJsonAsync($"/contacts/{Guid.NewGuid()}", new UpdateContactRequest("testname", "fschapdick@gmail.com", "+492111234567"));
+
+        // Assert
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.NotFound,response.StatusCode);
+    }
+    
+    [Fact]
+    public async Task UpdateContact_ReturnsBadRequest_WhenNameIsNotValid()
+    {
+        // Act
+        HttpResponseMessage response = await Client.PutAsJsonAsync($"/contacts/{Guid.NewGuid()}", new UpdateContactRequest("ab"));
+        
+        // Assert
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.BadRequest,response.StatusCode);
+    }
+    
+    [Fact]
+    public async Task UpdateContact_ReturnsBadRequest_WhenEmailIsNotValid()
+    {
+        // Act
+        HttpResponseMessage response = await Client.PutAsJsonAsync($"/contacts/{Guid.NewGuid()}", new UpdateContactRequest("abc", "fschapdick@@gmail.com"));
+
+        // Assert
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.BadRequest,response.StatusCode);
+    }
+    
+    [Fact]
+    public async Task UpdateContact_ReturnsBadRequest_WhenMobileIsNotValid()
+    {
+        // Act
+        HttpResponseMessage response = await Client.PutAsJsonAsync($"/contacts/{Guid.NewGuid()}", new UpdateContactRequest("abc", Mobile: "+499999999999"));
+        
+        // Assert
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.BadRequest,response.StatusCode);
     }
 }

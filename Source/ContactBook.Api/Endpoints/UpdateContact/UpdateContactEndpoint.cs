@@ -3,7 +3,6 @@ using ContactBook.Api.Data;
 using ContactBook.Api.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace ContactBook.Api.Endpoints.UpdateContact;
 
@@ -11,6 +10,7 @@ public static class UpdateContactEndpoint
 {
     private const string UpdateContactRoute = "/contacts/{contactId:guid}";
     private const string UpdateContactContentType = "application/json";
+    private const string ContactsTag = "Contacts";
     
     public static void MapUpdateContactEndpoint(this WebApplication app)
     {
@@ -18,14 +18,16 @@ public static class UpdateContactEndpoint
             .Accepts<UpdateContactRequest>(UpdateContactContentType)
             .Produces((int) HttpStatusCode.OK)
             .Produces((int) HttpStatusCode.Conflict)
-            .Produces((int) HttpStatusCode.InternalServerError);
+            .Produces((int) HttpStatusCode.InternalServerError)
+            .AddEndpointFilter<ValidatorFilter<UpdateContactRequest>>()
+            .WithTags(ContactsTag);
     }
 
-    private static async Task<IResult> UpdateContact([FromRoute] Guid contactId, [AsParameters] UpdateContactRequest request, ContactBookContext dbContext, CancellationToken cancellationToken = default)
+    private static async Task<IResult> UpdateContact([FromRoute] Guid contactId, [FromBody] UpdateContactRequest request, ContactBookContext dbContext, CancellationToken cancellationToken = default)
     {
         try
         {
-            Contact? contact = await dbContext.Contacts.FindAsync(new object?[] {contactId}, cancellationToken: cancellationToken);
+            Contact? contact = await dbContext.Contacts.AsNoTracking().FirstOrDefaultAsync(x => x.Id == contactId, cancellationToken);
             if (contact is null)
             {
                 return Results.NotFound(contactId);
