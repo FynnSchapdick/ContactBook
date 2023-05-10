@@ -3,7 +3,6 @@ using ContactBook.Api.Data;
 using ContactBook.Api.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace ContactBook.Api.Endpoints.DeleteContact;
 

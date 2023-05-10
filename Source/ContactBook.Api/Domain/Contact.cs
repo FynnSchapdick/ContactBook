@@ -1,6 +1,4 @@
-﻿using MassTransit;
-
-namespace ContactBook.Api.Domain;
+﻿namespace ContactBook.Api.Domain;
 
 public sealed record Contact
 {
@@ -19,7 +17,7 @@ public sealed record Contact
     {
         return new Contact(email, mobile)
         {
-            Id = NewId.NextGuid(),
+            Id = Guid.NewGuid(),
             Name = name
         };
     }
